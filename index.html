@@ -1,0 +1,816 @@
+<!<!DOCTYPE html>
+<html>
+<head>
+    <title>Babylon.js Example</title>
+    <meta charset="utf-8" />
+    <style>
+        canvas {
+            width: 800px;
+            height: 600px;
+            touch-action: none;
+        }
+		 .panel_boczny{
+            position: relative; /* Pozycja absolutna */
+             float:top; /* Góra */
+             float: left; /* Lewo */
+			 height: 600px;
+			background-color:#ebe9e4
+			}
+			
+	.round-button {
+  width: 25px;
+  height: 25px;
+  border-radius: 50%;
+  background-color: gray;
+  border: none;
+  color: white;
+  font-size: 16px;
+ }
+.wstepne {
+  background-color: green;
+}
+.polka4{
+ width: 30px;
+  height: 30px;
+background-color: green;
+font-size: 12px;
+}
+    </style>
+</head>
+<body>
+    <canvas id="renderCanvas"></canvas>
+	
+		<div class="panel_boczny"> 
+	
+	<div class="input">             
+		    <label class="opis_label">Szerokość 300-600 mm </span> </label><br>
+                 <input type="number" id="Szerokosc" min="300" max="600" value="450" step="1"  />     
+			<label class="wartosc-label" id="wartosc_szer"><span class="slider-value"></span> mm</label>
+    </div>
+    <div class="input">             
+		    <label class="opis_label">Wysokość 1800-2300 mm </span> </label><br>
+
+                 <input type="number" id="Wysokosc" min="1800" max="2300" value="2200" step="1"  />     
+			<label class="wartosc-label" id="wartosc_szer"><span class="slider-value"></span> mm</label>
+    </div>
+     <div class="input">             
+		    <label class="opis_label">Głebokość 300-600 mm </span> </label><br>
+                 <input type="number" id="Glebokosc" min="300" max="600" value="500" step="1"  />     
+			<label class="wartosc-label" id="wartosc_szer"><span class="slider-value"></span> mm</label>
+    </div>
+	  <div class="input">             
+		    <label class="opis_label">Półki</span> </label><br>
+           <button class="round-button" id ="Polka0" >0</button>
+		   <button class="round-button" id ="Polka1" >1</button>
+		   <button class="round-button" id ="Polka2" >2</button>
+		   <button class="round-button wstepne"  id ="Polka3" >3</button>
+    </div>
+		  <div class="input">             
+		    <label class="opis_label">Półka nad drązkiem</span> </label><br>
+		   <button class="round-button wstepne polka4"  id ="Polka4" >Tak</button>
+    </div>
+	
+	 
+	<div class="kolor_korpusu">
+		<label class="opis_korpus">Kolor korpusu  </label><br> <br>
+		<button class="btn"id="sonoma">S </button>
+		<button class="btn"id="hamilton">H </button>	<br>
+		<button class="btn"id="wymiar">Wymiar pokaż/ukryj</button><br>
+		<button class="btn"id="strona_otw">Drzwi lewe/prawe</button><br>
+		<button class="btn"id="Front_PU">Drzwi pokaż/ukryj</button>
+	 </div>
+	
+	
+<button type="button" id="UA_00_340160" >
+  <img src="https://raw.githubusercontent.com/MARK1364/Uchwyty/c62236d770c641bf4311073aaa9f48cfee862186/UA-00-340160.png" alt="Zdjęcie" width="150" height="150">
+</button>
+
+</div>
+
+	
+	
+    <input type="range" id="slider" min="-50" max="50" value="0" step="1">
+    <script src="https://cdn.babylonjs.com/babylon.js"></script>
+    <script src="https://cdn.babylonjs.com/loaders/babylonjs.loaders.min.js"></script>
+	    <script src="https://cdn.babylonjs.com/gui/babylon.gui.min.js"></script>
+    <script>
+        var canvas = document.getElementById("renderCanvas");
+        
+
+        var engine = new BABYLON.Engine(canvas, true);
+        var createScene = function () {
+            var scene = new BABYLON.Scene(engine);
+            scene.clearColor = new BABYLON.Color3(0.6, 0.6, 0.6);
+			
+var target = new BABYLON.Vector3(0, 1.0, 0.5);
+
+   
+            camera = new BABYLON.ArcRotateCamera("camera", 2,1.5,1, target, scene);  // 1,1,2 -2 POWIEKSZA OBRAZ
+		     //BABYLON.SceneLoader.ImportMesh("","https://raw.githubusercontent.com/MARK1364/3DD/bc2c5a6a8e2d36a45764c4edca14863cc416c185/","SZAFA4.glb", scene, function (newMeshes) {
+		
+                    camera.attachControl(canvas, true);
+					camera.lowerAlphaLimit = Math.PI/45; // minimalny kąt obrotu wokół osi y
+					camera.upperAlphaLimit = Math.PI/1.0; // maksymalny kąt obrotu wokół osi y
+					camera.lowerBetaLimit = Math.PI/180; // minimalny kąt obrotu wokół osi x
+					camera.upperBetaLimit = Math.PI/1; // maksymalny kąt obrotu wokół osi x
+					//camera.lowerRadiusLimit = 3; // minimalna odległość kamery od celu
+					camera.lowerRadiusLimit = 4; // minimalna odległość kamery od celu
+				//	camera.upperRadiusLimit =4; // maksymalna odległość kamery od celu
+						camera.upperRadiusLimit =4; // maksymalna odległość kamery od celu
+                    camera.angularSensibility = 2; //predkość ruchu myszka
+scene.activeCamera = camera
+       var light = new BABYLON.HemisphericLight("light", new BABYLON.Vector3(0, 100, 0), scene);
+                light.intensity = 1.9; //jasnosc tekstury	
+	
+		 let uchwyt_UA_00_340160 ;	
+		 let uchwyt_UA_A18160;	
+		 let uchwyt_UA_ARS160;	
+let klamka;
+document.getElementById("UA_00_340160").addEventListener("click", function() {
+      assignValue(568);
+});	  
+  function assignValue(value) {
+    klamka = value;
+    console.log(`Kliknięto przycisk, klamka = ${klamka}`);
+  }
+
+	
+//https://github.com/MARK1364/Uchwyty/blob/a4e323041f438303c27644dedac2e9910adfdaab/uchwyty.glb
+		BABYLON.SceneLoader.ImportMesh("","https://raw.githubusercontent.com/MARK1364/Uchwyty/a4e323041f438303c27644dedac2e9910adfdaab/","uchwyty.glb", scene, function (newMeshes) {	
+		 uchwyt_UA_00_340160 = scene.getMeshByName("UA-00-340160");	
+	     uchwyt_UA_A18160 = scene.getMeshByName("UA-A18160");	
+		uchwyt_UA_ARS160 = scene.getMeshByName("UA-ARS160");	
+
+});
+//	https://github.com/MARK1364/3DD/blob/b281dcbfdcd5575a9e4b858c9d2f362f7f29de6e/SZAFA8a.glb
+		BABYLON.SceneLoader.ImportMesh("","https://raw.githubusercontent.com/MARK1364/3DD/b281dcbfdcd5575a9e4b858c9d2f362f7f29de6e/","SZAFA8a.glb", scene, function (newMeshes) {	
+
+
+ //----------------------------------------------------------- dane wejsciowe ;  tablice  itp-------------------------------------------------------
+   //TOL-Tablica Obiektow Lewych
+   // TS- Tablica Wiencow
+       var root = newMeshes[0];			
+       var srodek = scene.getMeshByName("srodek");		
+       var meshe_s = root.getChildMeshes();   // "meshe_s" tablica bez __root__
+       let srodek_x=srodek.position.x ;   //-1 wyklucza pobliskie wartosci np299.98
+	   let srodek_y=srodek.position.y ;   //-1 wyklucza pobliskie wartosci np299.98
+	   let srodek_z=srodek.position.z ;   //-1 wyklucza pobliskie wartosci np299.98
+
+		 let TOL = [];  //  tabela siatek do odsuniecia w lewo
+         meshe_s.forEach((mesh) => {
+         if (mesh.position.x < srodek_x-2 && mesh.name !=="srodek") {
+         TOL.push(mesh);
+		 console.log(TOL);
+		  }
+          });
+													   
+		   let TOP = [];   //  tabela siatek do odsuniecia w prawo
+         meshe_s.forEach((mesh) => {
+         if (mesh.position.x > srodek_x+2 && mesh.name !=="srodek") {
+         TOP.push(mesh);
+          }
+          });
+		  
+		  let TOT = [];   //  tabela siatek do odsuniecia w tylu
+         meshe_s.forEach((mesh) => {
+         if (mesh.position.y > srodek_y+20 && mesh.name !=="srodek") {
+         TOT.push(mesh);
+          }
+          });  
+		  
+		  let TOF = [];   //  tabela siatek do odsuniecia w przod (w kierunku frontu)
+         meshe_s.forEach((mesh) => {
+         if (mesh.position.y < srodek_y-20 && mesh.name !=="srodek") {
+         TOF.push(mesh);
+          }
+          });
+		  
+		   let TS = [];   //  tabela do skalowania szerokosci; wience,rurki,front itp
+         meshe_s.forEach((mesh) => {
+         if (mesh.position.x >=srodek_x-2&&mesh.position.x <= srodek_x+2 && mesh.name !=="srodek") {
+         TS.push(mesh);
+          }  
+          });
+		  
+		 let TG = [];   //  tabela do skalowania glebokosci; boczki, polki,wience
+         meshe_s.forEach((mesh) => {
+         if (mesh.position.y >=srodek_y-20&&mesh.position.y <= srodek_y+20 && mesh.name !=="srodek"&&mesh.getBoundingInfo().boundingBox.extendSize.y * 2>100) {
+         TG.push(mesh);
+          }  
+          });
+		  
+        //skala wysokosc
+		 
+		 let TW = [];   //  tabela do skalowania wysokoscii; boczki, front , plecy
+         meshe_s.forEach((mesh) => {
+         if ( mesh.name =="bok L"  ||   mesh.name =="bok P" ||  mesh.name =="plecy"  ||   mesh.name =="front"
+		 ){
+         TW.push(mesh);
+          }  	  
+          });
+		  
+		 let TOG = [];   //  tabela do odsuniecia w gore 
+         meshe_s.forEach((mesh) => {
+         if (mesh.position.z >=srodek_z+20
+		 &&mesh.position.x >srodek_x-20&&mesh.position.x <= srodek_x+20
+		 &&mesh.position.y >=srodek_y-20&&mesh.position.y <= srodek_y+20
+		 || mesh.name =="moc L"
+		 || mesh.name =="moc P"
+		 || mesh.name =="zawias P2"
+		 || mesh.name =="zawias L2"	
+		 || mesh.name =="zawias P3"
+		 || mesh.name =="zawias L3"			 
+		 && mesh.name !=="srodek") {
+         TOG.push(mesh);	 
+        
+          }  
+          });
+		  
+		 let TOD = [];   //  tabela do odsuniecia w dol
+         meshe_s.forEach((mesh) => {
+         if (mesh.position.z <+srodek_z-20
+		 &&mesh.position.x >srodek_x-20&&mesh.position.x <= srodek_x+20
+		 &&mesh.position.y >=srodek_y-20&&mesh.position.y <= srodek_y+20
+		 || mesh.name =="zawias L1"
+		 || mesh.name =="zawias P1"		 
+		 ||mesh.position.z <=srodek_z-1120                             // dodaje NOZKI
+		 && mesh.name !=="srodek") {
+         TOD.push(mesh);	
+          }  
+          });
+// +++++++++++++++++++++++++++++++++++++koniec, dane wejsciowe ;  tablice  itp +++++++++++++++++++++++++++++
+
+//------------------------------------------------------------Przypisywanie tekstury do siatki ----------------------------------------------
+					function zmienTekstureSiatek(teksturaURL) {		
+                    var material = new BABYLON.StandardMaterial("textureMaterial", scene);
+					material.diffuseTexture = new BABYLON.Texture(teksturaURL, scene);
+                    meshe_s.forEach(function (mesh) {
+					  if (mesh.getBoundingInfo().boundingBox.extendSize.x * 2>=17&&mesh.getBoundingInfo().boundingBox.extendSize.x * 2<=19
+					  ||mesh.getBoundingInfo().boundingBox.extendSize.z * 2>=17&&mesh.getBoundingInfo().boundingBox.extendSize.z * 2<=19
+					  || mesh.getBoundingInfo().boundingBox.extendSize.y * 2 >=17&& mesh.getBoundingInfo().boundingBox.extendSize.y * 2 <=19 ) {    
+                     mesh.material = material;
+					  };
+                     }); 
+					};
+	
+ //+++++++++++++++++++++++++++++++++++++ Przypisywanie tekstury do siatki +++++++++++++++++++++++++++++
+	 
+ // --------------------------------------------------------- pole textowe "Szerokość"     -------------------------------------------
+	  var szer = document.getElementById("Szerokosc");	 
+	 let oldValue =szer.value/2;	
+	 let oldValue2 =szer.value;
+	   let roznica_x
+     szer.addEventListener("change", function () {
+	 // pilnowanie zakresu 350-700
+    var value = parseInt(szer.value);
+    var min = parseInt(szer.min);
+    var max = parseInt(szer.max);
+    if (value < min || isNaN(value)) {
+    szer.value = szer.min;
+   } else if (value > max) {
+    szer.value =szer.max;
+   }
+	  // koniec pilnowanie zakresu
+	  
+       let innvartosc=oldValue;   //pomocnicza wartosc tak musi byc
+       let innvartosc2=oldValue2; 
+	
+		// A. skalowanie wiencow, rurek, FRONTU
+	 TS.forEach((mesh) => {  // tu trzbe zrobic petle for
+	 let newValue2 = szer.value;
+	 roznica_x=newValue2-innvartosc2;
+	 let szer_obiektu=mesh.getBoundingInfo().boundingBox.extendSize.x * 2;
+	 let skala2=(szer_obiektu+roznica_x)/((szer_obiektu));  // wyliczanie skali skala2=(564+ roznica na suwaku))/(564))      , trzeba ustawic roznce suwaka
+	 mesh.scaling.x=skala2;
+	 newValue2 = oldValue2;
+	 });//koniec for
+
+
+	  // B. przesuwanie w prawo
+	  for (let i = 0; i <TOP.length; i++) {
+      var mesh = TOP[i];
+     let newValue = szer.value/2;
+      let roznica=newValue-innvartosc;
+     let wartosc_przesuniecia_P=mesh.position.x+roznica; 
+	 mesh.position.x=wartosc_przesuniecia_P;
+     oldValue = newValue; 
+	 }; //koniec for
+		
+	 // C. przesuwanie w lewo
+	 for (let i = 0; i <TOL.length; i++) {
+     const mesh = TOL[i];
+     let newValue = szer.value/2;
+	 let roznica=newValue-innvartosc;  //  roznica=nowa wartosc  - stara wartosc
+     let wartosc_przesuniecia_L=mesh.position.x-roznica; 
+	 mesh.position.x=wartosc_przesuniecia_L;
+     oldValue = newValue; 
+	 }; //koniec for		
+	 
+	 Zamykanie_otwieranie(0);    // zawsze przy poszerzaniu dzrzwi sa zamkniete, bo przy otwartych trzeba robic korekty frontu i uchwytu
+
+     }); //koniec funkcji "change"
+
+
+//++++++++++++++++++++++++++++++++++++++++++  Szerokosc +++++++++++++++++++++++++++++++++++++
+
+ // -------------------------------------------------------------- "Glebokość"   ----------------------------------------------------
+    var gle = document.getElementById("Glebokosc");	 
+	let oldValue_g =gle.value/2;	
+	let oldValue2_g =gle.value;
+	gle.addEventListener("change", function () {
+   // pilnowanie zakresu 400-600
+   var value = parseInt(gle.value);
+   var min = parseInt(gle.min);
+   var max = parseInt(gle.max);
+   if (value < min || isNaN(value)) {
+   gle.value = gle.min;
+  } else if (value > max) {
+   gle.value =gle.max;
+  }
+  // koniec pilnowanie zakresu
+       let innvartosc_g=oldValue_g;   //pomocnicza wartosc tak musi byc
+       let innvartosc2_g=oldValue2_g;
+	   // A. skalowanie bokow wiencow polek
+	 TG.forEach((mesh) => {  // tu trzbe zrobic petle for
+	 let newValue2_g = gle.value;
+	 let roznica_g=newValue2_g-innvartosc2_g;
+	 let gle_obiektu=mesh.getBoundingInfo().boundingBox.extendSize.y * 2;
+	 let skala2_g=(gle_obiektu+roznica_g)/((gle_obiektu));  // wyliczanie skali skala2=(564+ roznica na suwaku))/(564))      , trzeba ustawic roznce suwaka
+	 mesh.scaling.y=skala2_g;
+	 newValue2_g = oldValue2_g;
+	 });//koniec for
+	 // B. przesuwanie w tyl
+	  for (let i = 0; i <TOT.length; i++) {
+      var mesh = TOT[i];
+     let newValue_g = gle.value/2;
+      let roznica_g=newValue_g-innvartosc_g;
+     let wartosc_przesuniecia_G=mesh.position.y+roznica_g; 
+	 mesh.position.y=wartosc_przesuniecia_G;
+     oldValue_g = newValue_g; 
+	 }; //koniec for
+		// C. przesuwanie w przod
+	  for (let i = 0; i <TOF.length; i++) {
+      var mesh = TOF[i];
+     let newValue_g = gle.value/2;
+      let roznica_g=newValue_g-innvartosc_g;
+     let wartosc_przesuniecia_G=mesh.position.y-roznica_g; 
+	 mesh.position.y=wartosc_przesuniecia_G;
+     oldValue_g = newValue_g;  
+	 }; //koniec for 
+	 }); //koniec funkcji "change" 
+	
+// --------------------------------------------------------------------  Wysokość  --------------------------------------------------------
+	 var wys = document.getElementById("Wysokosc");	 
+	 let oldValue_w =wys.value/2;	
+	 let oldValue2_w =wys.value;
+	wys.addEventListener("change", function () {  
+	// pilnowanie zakresu 1800-2200
+    var value = parseInt(wys.value);
+    var min = parseInt(wys.min);
+    var max = parseInt(wys.max);
+    if (value < min || isNaN(value)) {
+   wys.value = wys.min;
+   } else if (value > max) {
+   wys.value =wys.max;
+   }
+   // koniec pilnowanie zakresu
+      let innvartosc_w=oldValue_w;   //pomocnicza wartosc tak musi byc
+      let innvartosc2_w=oldValue2_w;
+	  // A. przesuwanie w gore
+	  for (let i = 0; i <TOG.length; i++) {
+      var mesh = TOG[i];
+     let newValue_w = wys.value/2;
+     let roznica_w=newValue_w-innvartosc_w;
+     let wartosc_przesuniecia_W=mesh.position.z+roznica_w; 
+	 mesh.position.z=wartosc_przesuniecia_W;
+     oldValue_w = newValue_w;  
+	};
+	   // B. przesuwanie w dol
+	  for (let i = 0; i <TOD.length; i++) {
+      var mesh = TOD[i];
+     let newValue_w = wys.value/2;
+      let roznica_w=newValue_w-innvartosc_w;
+     let wartosc_przesuniecia_W=mesh.position.z-roznica_w; 
+	 mesh.position.z=wartosc_przesuniecia_W;
+     oldValue_w = newValue_w;  
+	};
+	// C.skaluje w gore; boki front plecy
+	TW.forEach((mesh) => {  // tu trzbe zrobic petle for
+	 let newValue2_w = wys.value;
+	 let roznica_w=newValue2_w-innvartosc2_w;
+	 let wys_obiektu=mesh.getBoundingInfo().boundingBox.extendSize.z * 2;
+	 let skala2_w=(wys_obiektu+roznica_w)/((wys_obiektu));  // wyliczanie skali skala2=(564+ roznica na suwaku))/(564))      , trzeba ustawic roznce suwaka
+	 mesh.scaling.z=skala2_w;
+	 newValue2_w = oldValue2_w;
+	 }); //koniec for 
+Zamykanie_otwieranie(1.6) //wywolanie funkcji
+	}); //koniec " Wysokosci" funkcji "change"	
+		
+		   //++++++++++++++++++++++++++++++++++++++++ Wysokość++++++++++++++++++++++++++++++++
+
+  
+          // --------------------------------------------------   Dzrzwi lewe/prawe   ----------------------------------
+
+                //  Logika obsługi kliknięcia przycisku do ukrywania
+		          let uchwyt_L = scene.getMeshByName("uchwyt L");
+			      let uchwyt_P = scene.getMeshByName("uchwyt P");
+			  let zawias_L1 = scene.getMeshByName("zawias L1");
+			  let zawias_L2 = scene.getMeshByName("zawias L2");
+			  let zawias_L3 = scene.getMeshByName("zawias L3");
+			      let zawias_P1 = scene.getMeshByName("zawias P1");
+			      let zawias_P2 = scene.getMeshByName("zawias P2");
+			      let zawias_P3 = scene.getMeshByName("zawias P3");
+			   
+		      uchwyt_L.isVisible =true;   // opcja1 uchwyt po przeciwnej stronie niz zawiasy
+			  zawias_L1.isVisible = false;
+			  zawias_L2.isVisible = false;
+			   zawias_L3.isVisible = false;
+			   
+			  uchwyt_P.isVisible = false; // opcja2 uchwyt po przeciwnej stronie niz zawiasy
+			  zawias_P1.isVisible = true;
+			  zawias_P2.isVisible = true;
+			  zawias_P3.isVisible = true;
+			 
+              var button_strona_otw = document.getElementById("strona_otw");
+              button_strona_otw.addEventListener("click", function() {
+              // Pokazanie/ukrycie siatki po kliknięciu przycisku
+              uchwyt_P.isVisible =   !uchwyt_P.isVisible;
+			  zawias_L1.isVisible = !zawias_L1.isVisible;
+			  zawias_L2.isVisible = !zawias_L2.isVisible;
+			  zawias_L3.isVisible = !zawias_L3.isVisible;
+				  uchwyt_L.isVisible =   !uchwyt_L.isVisible;
+				  zawias_P1.isVisible = !zawias_P1.isVisible;
+				  zawias_P2.isVisible = !zawias_P2.isVisible;	
+				  zawias_P3.isVisible = !zawias_P3.isVisible;	
+ 
+ // Ustawienia poczatkowe frontu,uchwytu i innych zmiennych
+         front.rotation.z = 0	//powoduje zamkniecie frontu zawsze gdy zmieniamy strone, ustawienie pocztkowe	  
+        uchwyt_L.rotation.z=0// jak wyzej
+	     uchwyt_P.rotation.z=0 // jak wyzej
+		 ukryj_wymiary(); // wywolanie funkcji ukrywajacej wymiary
+              });		// koniec- Logika obsługi kliknięcia przycisku do ukrywania
+			  
+	  //   +++++++++++++++++++++++++++  Dzrzwi lewe/prawe    ++++++++++++++++++++++++++++++++++++++++
+	  
+	   //  ----------------------------------------     Funkcje do przesuwania piowtow  -----------------------------------------------------------
+	let front = scene.getMeshByName("front");	 
+	let pivotPoint
+     function przesuniecie_pivot_Prawo() {
+    let pivotPoint = new BABYLON.Vector3(front.getBoundingInfo().boundingBox.extendSize.x,front.getBoundingInfo().boundingBox.extendSize.y, 0); // 224 dla szafy 450mm , przesuniecie osi obrotu na prawa strone frontu
+	front.setPivotPoint(pivotPoint);
+	}
+	     function przesuniecie_pivot_Lewo() {
+	 pivotPoint = new BABYLON.Vector3(-front.getBoundingInfo().boundingBox.extendSize.x-2,front.getBoundingInfo().boundingBox.extendSize.y, 0); // 224 dla szafy 450mm , przesuniecie osi obrotu na lewo strone frontu
+	front.setPivotPoint(pivotPoint);
+	}
+//   +++++++++++++++++++++++++++  Funkcje do przesuwania piowtow   ++++++++++++++++++++++++++++++++++++++++
+
+     //  ----------------------------------------      Otwieranie frontu  na klik   -----------------------------------------------------------
+	 // drzwi sa otwierane przy kliknieciu na drzwi  i przy kliknieciu w przyciski  wysokosc i półki aby pokazac wymiary
+	 
+	//.....................Funkcja Zamykanie_otwieranie().........................
+  let os_P = scene.getMeshByName("os P");  
+  let os_L = scene.getMeshByName("os L");
+  	uchwyt_UA_00_340160.position.x=1;
+	uchwyt_UA_00_340160.position.z=1;
+	
+	  console.log("Ukryte wymiary"+uchwyt_UA_00_340160.position.x);
+	 function Zamykanie_otwieranie(kat_otwarcia){   // dodalem funkcje aby wyzwalac w roznych miejscach
+  // otwarcie drzwi  zawias z prawej
+   if (zawias_P1.isVisible){ // warunek do okreslenia strony
+    przesuniecie_pivot_Prawo()
+    front.rotation = new BABYLON.Vector3(0, 0, 0); //tak mui byc
+    front.rotation.z = kat_otwarcia;
+	front.position.x = szer.value / 2; //korekta polozenia
+	
+	let u_x=uchwyt_L.position.x-os_P.position.x; //wartosc przesuniacia
+	let u_y=uchwyt_L.position.y-os_P.position.y;
+	uchwyt_L.setPivotPoint(new BABYLON.Vector3(-u_x, 40, 0));  //punkt obrotu
+	uchwyt_L.rotation=new BABYLON.Vector3(0, 0, 0);
+	uchwyt_L.rotation.z =kat_otwarcia;  //radiany  ~|1.58=90
+    uchwyt_L.position.x = os_L.position.x+37; //korekta polaozenia
+
+	}
+	else{  //zamykanie drzwi  zawias z lewej
+	przesuniecie_pivot_Lewo();
+    front.rotation = new BABYLON.Vector3(0, 0, 0); //tak mui byc
+    front.rotation.z =- kat_otwarcia;
+ 	front.position.x = (szer.value / 2) - (szer.value - front.getBoundingInfo().boundingBox.extendSize.x * 2) + 4;  //korekta polozenia 
+	 
+  	u_x=uchwyt_P.position.x-os_L.position.x; //wartosc przesuniacia
+	u_y=uchwyt_P.position.y-os_L.position.y;
+	uchwyt_P.setPivotPoint(new BABYLON.Vector3(-u_x, 40, 0));  //punkt obrotu
+	uchwyt_P.rotation=new BABYLON.Vector3(0, 0, 0);
+	uchwyt_P.rotation.z =-kat_otwarcia;  //radiany  ~|1.58=90
+	uchwyt_P.position.x = os_P.position.x-37; //korekta polaozenia liczone od osi_L, moglem też od boczku
+	}
+		//ukrywanie wymiarow po zamknieciu drzwi
+	 if (front.rotation.z == 0) {
+    lineToHide.forEach((piernik) => {
+    piernik.hideDimension();
+    });
+  }
+  else{
+   lineToHide.forEach((piernik) => {
+   obslugaWymiarowania();
+    });
+	}
+ }
+	 //.....................Funkcja Zamykanie_otwieranie().........................
+	 
+	 //  ----------------------------------------      Otwieranie frontu  na klik   -----------------------------------------------------------
+	 // drzwi sa otwierane przy kliknieciu na drzwi  i przy kliknieciu w przyciski  Wysokosc i Półki aby pokazac wymiary 
+	 // Ustawienia wstepne sa przy przycisku "Szer" i "Strona_otw"
+
+	front.actionManager = new BABYLON.ActionManager(scene);
+	front.actionManager.registerAction(new BABYLON.ExecuteCodeAction(BABYLON.ActionManager.OnPickUpTrigger, function () {
+
+	if ( front.rotation.z===1.6|| front.rotation.z===-1.6  ){  // sprawdza czy drzwi otwarte i ustawia odpowiednio licznik
+	var  kat_otwarcia = 0; // Obrót o 90 stopni
+    } else { // Kliknięcie parzyste
+    kat_otwarcia = 1.6; // Obrót o -90 stopni
+    };
+  Zamykanie_otwieranie(kat_otwarcia) //wywolanie funkcji , tu zmienna kat_otwarcia przyjmuje dwie wartosci 0 i 1.6
+}));
+
+
+// +++++++++++++++++++++++++++++++++++++++ Otwieranie frontu +++++++++++++++++++++++++++++++++++++
+
+
+
+    //  ----------------------------------------------------------  Tekstury   ------------------------------------------------------------
+	 var button_sonama= document.getElementById("sonoma"); 
+	button_sonama.addEventListener('click', function() {
+    zmienTekstureSiatek("https://raw.githubusercontent.com/MARK1364/Tekstury/4e865a0f2150e226665d6dea2a2e54effcc5fff3/DAB_SONOMA.jpg");
+	});
+	var button_hamilton = document.getElementById("hamilton");			
+	 var button_hamilton= document.getElementById("hamilton"); 
+	button_hamilton.addEventListener('click', function() {
+	 zmienTekstureSiatek("https://raw.githubusercontent.com/MARK1364/Tekstury/4e865a0f2150e226665d6dea2a2e54effcc5fff3/DAB_HAMILTON.jpg");
+	}); 		  
+	// ++++++++++++++++++++++++++++++++++++++++  Tekstury  +++++++++++++++++++++++++++++
+	
+   // ------------------------------------------------------------ Półki  ----------------------------------------------
+    let polka_1 = scene.getMeshByName("polka 1");
+	let polka_2 = scene.getMeshByName("polka 2");
+	let polka_3 = scene.getMeshByName("polka 3");
+	let polka_4 = scene.getMeshByName("polka 4");
+	let rurka = scene.getMeshByName("rurka");
+	let wieniec_G = scene.getMeshByName("wieniec G");
+	let moc_P = scene.getMeshByName("moc P");
+	let moc_L = scene.getMeshByName("moc L");
+		let wieniec_D = scene.getMeshByName("wieniec D");
+	
+	var button_polka0= document.getElementById("Polka0");   
+    button_polka0.addEventListener('click', function() {
+    button_polka0.style.backgroundColor = "green";
+	button_polka1.style.backgroundColor = "gray";
+	button_polka2.style.backgroundColor = "gray";
+	button_polka3.style.backgroundColor = "gray";
+	 polka_1.isVisible =  false;
+	 polka_2.isVisible =  false;
+	 polka_3.isVisible =  false; 
+	 Zamykanie_otwieranie(1.6); //wywolanie funkcji
+  } );
+	var button_polka1= document.getElementById("Polka1");   
+    button_polka1.addEventListener('click', function() {
+    button_polka0.style.backgroundColor = "gray";
+	button_polka1.style.backgroundColor = "green";
+	button_polka2.style.backgroundColor = "gray";
+	button_polka3.style.backgroundColor = "gray";
+	 polka_1.isVisible =  true;
+	 polka_2.isVisible =  false;
+	 polka_3.isVisible =  false;	
+    Zamykanie_otwieranie(1.6); //wywolanie funkcji	 
+} );		  
+	var button_polka2= document.getElementById("Polka2");   
+    button_polka2.addEventListener('click', function() {
+    button_polka0.style.backgroundColor = "gray";
+	button_polka1.style.backgroundColor = "gray";
+	button_polka2.style.backgroundColor = "green";
+	button_polka3.style.backgroundColor = "gray";
+	 polka_1.isVisible =  true;
+	 polka_2.isVisible =  true;
+	 polka_3.isVisible =  false;	
+    Zamykanie_otwieranie(1.6); //wywolanie funkcji	 
+} );	
+var button_polka3= document.getElementById("Polka3");   
+    button_polka3.addEventListener('click', function() {
+    button_polka0.style.backgroundColor = "gray";
+	button_polka1.style.backgroundColor = "gray";
+	button_polka2.style.backgroundColor = "gray";
+	button_polka3.style.backgroundColor = "green";
+	 polka_1.isVisible =  true;
+	 polka_2.isVisible =  true;
+	 polka_3.isVisible =  true;	
+    Zamykanie_otwieranie(1.6); //wywolanie funkcji	 
+} );	
+
+var button_polka4= document.getElementById("Polka4");   
+    button_polka4.addEventListener('click', function() {	  	  		  
+	 polka_4.isVisible = !polka_4.isVisible;	
+if (polka_4.isVisible) {
+    button_polka4.style.backgroundColor = "green";
+	 button_polka4.textContent="Tak"
+	rurka.position.z=polka_4.position.z-50
+	moc_P.position.z=polka_4.position.z-50
+	moc_L.position.z=polka_4.position.z-50
+  } 
+  else {
+    button_polka4.style.backgroundColor = "gray";
+	button_polka4.textContent="Nie"
+	// rurka.position.z=polka_4.position.z-50
+	rurka.position.z=wieniec_G.position.z-50
+	moc_P.position.z=wieniec_G.position.z-50 
+	moc_L.position.z=wieniec_G.position.z-50	
+  }
+  Zamykanie_otwieranie(1.6); //wywolanie funkcji
+});
+   //++++++++++++++++++++++++++++++++++++++ Półki +++++++++++++++++++++++++++++++++++++
+
+  //-------------------------------------------------------- Klasa wymiarowanie-------------------------------------
+
+    
+	class LinieWymiarowe {
+  constructor() {
+    this.tube0 = null;
+    this.text0 = null;
+    this.rectangle0 = null;
+    this.tubes = [];
+    this.texts = [];
+    this.rectangles = [];
+
+
+  }
+  createLinieWymiarowe(scene, siatka1,odsuniecieZ1,odsuniecieX1, siatka2,odsuniecieZ2,odsuniecieX2 ) {
+    if (this.tube0) {
+      this.tube0.dispose();
+    }
+    if (this.text0) {
+      this.text0.dispose();
+    }
+    if (this.rectangle0) {
+      this.rectangle0.dispose();
+    }
+	 this.odsuniecieZ1 = odsuniecieZ1; //odsuwa koniec lini z punktu srodkowego na płaszczyzne
+     this.odsuniecieZ2 = odsuniecieZ2;
+	  this.odsuniecieX1 = odsuniecieX1; //odsuwa koniec lini z punktu srodkowego na płaszczyzne
+     this.odsuniecieX2 = odsuniecieX2;
+
+	var poczatek = (siatka1.position.z-odsuniecieZ1) / 1000;
+    var koniec = (siatka2.position.z+odsuniecieZ2) / 1000;
+    let war_wymiaru = parseInt(((siatka1.position.z-odsuniecieZ1 - siatka2.position.z-odsuniecieZ2) / 1000) * 1000);
+
+    var path0 = [new BABYLON.Vector3(odsuniecieX1/1000, poczatek, 0), new BABYLON.Vector3(odsuniecieX2/1000, koniec, 0)];
+    this.tube0 = BABYLON.MeshBuilder.CreateLines("tube0", { points: path0 }, scene);
+    this.tube0.color = new BABYLON.Color3(0.0, 1.0, 0.0);
+    this.tubes.push(this.tube0);
+
+    var adt = BABYLON.GUI.AdvancedDynamicTexture.CreateFullscreenUI("UI", true, scene);
+    this.rectangle0 = new BABYLON.GUI.Rectangle();
+    this.rectangle0.width = "37px";
+    this.rectangle0.height = "15px";
+    this.rectangle0.color = "white";
+    this.rectangle0.background = "white";
+    adt.addControl(this.rectangle0);
+    this.rectangle0.linkWithMesh(this.tube0);
+	 this.rectangle0.moveToVector3(path0[0], scene); // przykleienie w polowie lini
+    this.rectangles.push(this.rectangle0);
+
+    this.text0 = new BABYLON.GUI.TextBlock("Text0", war_wymiaru);
+    this.text0.color = "green";
+    this.text0.fontSize = 12;
+    this.rectangle0.addControl(this.text0);
+    //console.log("ddd");
+  }
+  
+ hideDimension() {
+    if (this.text0) {
+      this.text0.isVisible = false;
+	  this.rectangle0.isVisible=false;
+	  this.tube0.isVisible=false;
+    }
+};
+
+showDimension() {
+    if (this.text0) {
+      this.text0.isVisible = true;
+	  this.rectangle0.isVisible=true;
+	  this.tube0.isVisible=true;
+    }
+};
+
+}   // +++++++++++++++++++++++++++++++++++++   klasa wymiarowanie ++++++++++++++++++++++++++++++++
+
+    // -----------------------------------------------------------  Tworzywymiary -  funkcje create_Wymiary() i ukryj_wymiary() ------------------------------------------
+	  var linieWymiarowe1 = new LinieWymiarowe();
+	  var linieWymiarowe2 = new LinieWymiarowe();
+	  var linieWymiarowe3 = new LinieWymiarowe();
+	   var linieWymiarowe4 = new LinieWymiarowe();
+	   var linieWymiarowe5 = new LinieWymiarowe();
+	   
+	//var linieWymiarowe6 = new LinieWymiarowe();
+	// Tablica na przechowywanie obiektów do ukrycia
+ var lineToHide = [];
+
+ var create_Wymiary = function () {      //funkcja
+  linieWymiarowe1.createLinieWymiarowe(scene, wieniec_G, 9,0, polka_4, 9,0);
+  linieWymiarowe2.createLinieWymiarowe(scene, rurka, 15,0.0, polka_3, 9,0.0);
+  linieWymiarowe3.createLinieWymiarowe(scene, polka_3, 9,0, polka_2, 9,0);
+  linieWymiarowe4.createLinieWymiarowe(scene, polka_2, 9,0, polka_1, 9,0);
+  linieWymiarowe5.createLinieWymiarowe(scene, polka_1, 9,0, wieniec_D, 9,0);
+ //linieWymiarowe6.createLinieWymiarowe(scene, front, 0,0, wieniec_D, 0,0);
+  // Dodanie obiektów do tablicy lineToHide
+  lineToHide.push(linieWymiarowe1, linieWymiarowe2, linieWymiarowe3, linieWymiarowe4, linieWymiarowe5); // tworzenie tablicy
+}
+
+    var ukryj_wymiary=function(){      //funkcja
+    lineToHide.forEach((wymiarki)=>{
+    wymiarki.hideDimension();
+    });
+    }
+	
+	
+ create_Wymiary(); //wywolanie funkcji
+ ukryj_wymiary();   //wywolanie funkcji
+ // +++++++++++++++++++++++++++++++++++++++ Tworzywymiary -  funkcje create_Wymiary() i ukryj_wymiary()++++++++++++++++++++++++++++++++++++++
+ 
+//---------------------------------------------------------- nasluchiwanie zmiany przyciku   -------------------------------------------------
+  
+  
+ wys.addEventListener("change", obslugaWymiarowania);
+ 
+  button_polka0.addEventListener('click', obslugaWymiarowania); 
+  button_polka1.addEventListener('click', obslugaWymiarowania);
+  button_polka2.addEventListener('click', obslugaWymiarowania);
+  button_polka3.addEventListener('click', obslugaWymiarowania);
+  button_polka4.addEventListener('click', obslugaWymiarowania);
+
+ //++++++++++++++++++++++++++++++++++++++++ nasluchiwanie zmiany przyciku++++++++++++++++++++++++++++++++
+ 
+  // -----------------------------------------------------------    wymiarowe w zaleznosci od ilosci polek---------------------------------
+ function obslugaWymiarowania() {
+      // Twój kod do wykonania po wystąpieniu zdarzenia
+
+
+ lineToHide.forEach((chmura)=>{    //pokazanie wszystkich wymiarow
+ chmura.showDimension();
+ })
+
+if(polka_4.isVisible){
+linieWymiarowe1.showDimension();
+}else {
+ linieWymiarowe1.hideDimension()};
+ 
+if(polka_3.isVisible && polka_2.isVisible &&polka_1.isVisible){   //polka3
+linieWymiarowe2.createLinieWymiarowe(scene, rurka, 15,0, polka_3, 9,0);
+linieWymiarowe3.showDimension()
+linieWymiarowe4.showDimension()
+linieWymiarowe5.showDimension();
+};
+
+if(!polka_3.isVisible && polka_2.isVisible && polka_1.isVisible ){ //polka2
+linieWymiarowe2.createLinieWymiarowe(scene, rurka, 15,0, polka_2, 9,0);
+linieWymiarowe3.hideDimension()
+linieWymiarowe4.showDimension()
+linieWymiarowe5.showDimension();
+};
+
+if(!polka_3.isVisible && !polka_2.isVisible && polka_1.isVisible ){ //polka1 
+linieWymiarowe2.createLinieWymiarowe(scene, rurka, 15,0, polka_1, 9,0);
+linieWymiarowe3.hideDimension()
+linieWymiarowe4.hideDimension()
+linieWymiarowe5.showDimension();
+};
+
+if(!polka_3.isVisible && !polka_2.isVisible && !polka_1.isVisible ){ //polka0 
+linieWymiarowe2.createLinieWymiarowe(scene, rurka, 15,0, wieniec_D, 9,0);
+linieWymiarowe3.hideDimension()
+linieWymiarowe4.hideDimension()
+linieWymiarowe5.hideDimension();
+	}
+	};
+	
+
+
+  // ++++++++++++++++++++++++++++++++++++++++  wymiarowe w zaleznosci od ilosci polek++++++++++++++++++++++++
+  
+
+ });  // koniec importu
+
+            return scene;
+        }
+
+        var scene = createScene();
+
+        engine.runRenderLoop(function () {
+            scene.render();
+        });
+
+        window.addEventListener("resize", function () {
+            engine.resize();
+        });
+    </script>
+</body>
+</html>
+
