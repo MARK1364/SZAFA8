@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Galeria - Zakład Stolarski XYZ</title>
+  <style>
+    /* Style CSS dla strony */
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+    }
+    
+    header {
+      background-color: #333;
+      color: #fff;
+      padding: 20px;
+      text-align: center;
+    }
+    
+    h1 {
+      margin: 0;
+    }
+    
+    nav {
+      background-color: #555;
+      padding: 10px;
+      text-align: center;
+    }
+    
+    nav a {
+      color: #fff;
+      text-decoration: none;
+      margin: 0 10px;
+    }
+    
+    section {
+      margin: 20px;
+    }
+    
+    footer {
+      background-color: #333;
+      color: #fff;
+      padding: 10px;
+      text-align: center;
+    }
+    
+    .gallery {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+    
+    .gallery-item {
+      width: 200px;
+      margin: 10px;
+      filter: grayscale(100%);
+      transition: filter 0.3s ease;
+    }
+    
+    .gallery-item:hover {
+      filter: none;
+    }
+    
+    .gallery-item img {
+      width: 100%;
+      height: 150px;
+      cursor: pointer;
+    }
+
+    .overlay {
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 600px;
+      max-width: 100%;
+      height: 800px;
+      max-height: 100%;
+      background-color: rgba(0, 0, 0, 0.8);
+      display: none;
+      justify-content: center;
+      align-items: center;
+      z-index: 999;
+    }
+
+      .overlay.active {
+      display: flex;
+    }
+
+    .overlay-content {
+      position: relative;
+      width: 100%;
+      height: 100%;
+    }
+
+    .overlay-content img {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+    }
+
+    .close-btn {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      font-size: 24px;
+      color: #fff;
+      cursor: pointer;
+      transition: color 0.3s ease;
+    }
+
+    .close-btn:hover {
+      color: #ff0000;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Zakład Stolarski XYZ</h1>
+    <p>Wykonujemy meble kuchenne, szafy, garderoby i inne</p>
+  </header>
+  
+  <nav>
+  <a href="index.html">Strona główna</a>
+    <a href="galeria.html">Galeria</a>
+    <a href="kontakt.html">Kontakt</a>
+  </nav>
+  
+  <section>
+    <h2>Galeria</h2>
+    <div class="gallery">
+      <div class="gallery-item">
+        <img src="images\animacja v1.53.jpg" alt="Zdjęcie 1"onclick="openImage('images/animacja v1.53.jpg')">
+      </div>
+        <div class="gallery-item">
+        <img src="images\gablota.45.jpg" alt="Zdjęcie 2"onclick="openImage('images/gablota.45.jpg')">
+      </div>
+      <div class="gallery-item">
+        <img src="images\kuchnia2.43.jpg" alt="Zdjęcie 3"onclick="openImage('images/kuchnia2.43.jpg')">
+      </div>
+       <div class="gallery-item">
+        <img src="images\szafa wz.14.jpg" alt="Zdjęcie 4"onclick="openImage('images/szafa wz.14.jpg')">
+      </div>
+      <div class="gallery-item">
+        <img src="images\gablota.45.jpg" alt="Zdjęcie 5"onclick="openImage('images/gablota.45.jpg')">
+      </div>
+      <div class="gallery-item">
+        <img src="images/szafa6.8.jpg" alt="Zdjęcie 6"onclick="openImage('images/szafa6.8.jpg')">
+      </div>
+    </div>
+    
+    
+	  <div class="overlay" onclick="closeImage()" id="overlay">
+      <div class="overlay-content">
+        <span class="close-btn" onclick="closeImage()">&times;</span>
+        <img src="" alt="" id="overlay-image">
+      </div>
+    </div
+	
+  </section>
+  
+  <footer>
+    <p>&copy; 2023 Zakład Stolarski XYZ. Wszelkie prawa zastrzeżone.</p>
+  </footer>
+
+  <script>
+    const galleryItems = document.querySelectorAll('.gallery-item');
+
+    galleryItems.forEach(item => {
+      item.addEventListener('mouseenter', () => {
+        item.querySelector('img').style.filter = 'none';
+		       item.style.transform = 'scale(1.2)';
+      });
+
+      item.addEventListener('mouseleave', () => {
+        item.querySelector('img').style.filter = 'grayscale(100%)';
+		  item.style.transform = 'scale(1)';
+      });
+    });
+	
+ // /-----------------otwieranie-----------------------------
+    function openImage(src) {
+      const overlay = document.getElementById('overlay');
+      const overlayImage = document.getElementById('overlay-image');
+
+      overlayImage.src = src;
+      overlay.classList.add('active');
+    }
+
+    function closeImage() {
+      const overlay = document.getElementById('overlay');
+
+      overlay.classList.remove('active');
+    }
+  </script>
+</body>
+</html>
